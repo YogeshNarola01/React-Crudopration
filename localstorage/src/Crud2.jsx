@@ -8,6 +8,7 @@ const Crud2 = () => {
     const [record2,setRecord2]=useState(datas)
     const [status,setStatus]=useState("deactive")
     const [mdelet2,setMdelet2]=useState([])
+    const [mstatus,setMstatus]=useState([])
 
     const handlesubmit = (e) =>{
         e.preventDefault();
@@ -76,6 +77,32 @@ const Crud2 = () => {
         }
     }
 
+    const handleStatusedite = (id,checked) =>{
+        let all = [...mstatus]
+        if(checked){
+            all.push(id)
+        }else{
+            all = all.filter(val => val != id)
+        }
+        setMstatus(all)
+    }
+
+    const multipleStatusedite = () =>{
+        let mse = record2.map((val)=>{
+            if(mstatus.includes(val.id)){
+                if(val.status === "active"){
+                    val.status = "deactive"
+                }else{
+                    val.status = "active"
+                }
+            }
+            return val;
+        })
+        localStorage.setItem("users2",JSON.stringify(mse))
+        setRecord2(mse)
+        setMstatus([])
+    }
+
   return (
     <div align="center" className='main'>
         <h1>:: Add User Data ::</h1>
@@ -95,6 +122,7 @@ const Crud2 = () => {
                     <td>Status</td>
                     <td>Action</td>
                     <td><button className='mdbtn' onClick={()=>multipleDlet2()}>Delet</button></td>
+                    <td><button className='mdbtn' onClick={()=>multipleStatusedite()}>Status Edite</button></td>
                 </tr>
             </thead>
             <tbody>
@@ -116,6 +144,7 @@ const Crud2 = () => {
                                 </td>
                                 <td><button className='btn' style={{background:"#ed5650",color:"white",cursor:"pointer"}} onClick={()=> dataDelet(val.id)}>Delet</button></td>
                                 <td><input type="checkbox" onChange={(e)=>handleChangedelet2(val.id,e.target.checked)}/></td>
+                                <td><input type="checkbox" checked={mstatus.includes(val.id)} onChange={(e)=>handleStatusedite(val.id,e.target.checked)}/></td>
                             </tr>
                         )
                     })
