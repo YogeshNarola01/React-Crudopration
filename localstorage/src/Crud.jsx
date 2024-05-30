@@ -7,6 +7,7 @@ const Crud = () => {
     let data = localStorage.getItem('users1') ? JSON.parse(localStorage.getItem("users1")) : []
     const [record1,setRecord1]=useState(data)
     const [mdelet,setMdelet]=useState([])
+    const [mstatus,setMsattus]=useState([])
 
     const handlesubmit=(e)=>{
         e.preventDefault();
@@ -77,6 +78,33 @@ const Crud = () => {
         }
     }
 
+    const handleStatusedite = (id,checked) =>{
+        let all = [...mstatus]
+        if(checked){
+            all.push(id)
+        }else{
+            all = all.filter(val => val != id)
+        }
+        setMsattus(all)
+    }
+
+    const multipleStatusedite = () =>{
+        let multplestatusupdate = record1.map((val) => {
+            if(mstatus.includes(val.id)){
+                if(val.status === "active"){
+                    val.status = "deactive"
+                }else{
+                    val.status = "active"
+                }
+            }
+            return val
+        })
+        localStorage.setItem("users1",JSON.stringify(multplestatusupdate))
+        setRecord1(multplestatusupdate)
+        setMsattus([])
+    }
+
+
    return (
     <>
     <div align="center" className='main'>
@@ -96,6 +124,7 @@ const Crud = () => {
                     <td>Status</td>
                     <td>Action</td>
                     <td><button className='mdbtn' onClick={()=>multipleDelet()}>Delet</button></td>
+                    <td><button className='mdbtn' onClick={()=>multipleStatusedite()}>Status Edite</button></td>
                 </tr>
             </thead>
             <tbody>
@@ -117,6 +146,7 @@ const Crud = () => {
                                 </td>
                                 <td><button className='btn' style={{background:"#ed5650",color:"white",cursor:"pointer"}} onClick={()=>userDelet(val.id)}>Delet</button></td>
                                 <td><input type="checkbox" onChange={(e)=>handleChangedelet(val.id,e.target.checked)}/></td>
+                                <td><input type="checkbox" checked={mstatus.includes(val.id)} onChange={(e)=>handleStatusedite(val.id,e.target.checked)}/></td>
                             </tr>
                         )
                     })
