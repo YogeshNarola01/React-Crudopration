@@ -10,7 +10,6 @@ function App() {
     <>
      <div style={{display:"flex",justifyContent:"center"}}>
      <Crud/>
-     {/* <Crud2/> */}
      </div>
     </>
   )
