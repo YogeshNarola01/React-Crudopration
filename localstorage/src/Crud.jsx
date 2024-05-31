@@ -8,6 +8,7 @@ const Crud = () => {
     const [record1,setRecord1]=useState(data)
     const [mdelet,setMdelet]=useState([])
     const [mstatus,setMsattus]=useState([])
+    const [editid,setEditid]=useState("")
 
     const handlesubmit=(e)=>{
         e.preventDefault();
@@ -20,9 +21,27 @@ const Crud = () => {
         let obj = {
             id : Date.now(),name,phone,status
         };
-        let newfild = [...record1,obj]
-        localStorage.setItem("users1",JSON.stringify(newfild))
-        setRecord1(newfild)
+
+        if(editid){
+            let all = [...record1]
+            let upd = all.map((val)=>{
+                if(val.id == editid){
+                    return{
+                        ...val,
+                        name : name,
+                        phone : phone
+                    }
+                }
+                return val
+            })
+            setRecord1(upd)
+            localStorage.setItem("users1",JSON.stringify(upd))
+            setEditid("")
+        }else{
+            let newfild = [...record1,obj]
+            localStorage.setItem("users1",JSON.stringify(newfild))
+            setRecord1(newfild)
+        }
         setName("")
         setPhone("")
     }
@@ -47,6 +66,14 @@ const Crud = () => {
             localStorage.setItem("users1",JSON.stringify(upstatus))
             setRecord1(upstatus)
         }
+    }
+
+    const handleEdite = (id) =>{
+        let all = [...record1]
+        let editdata = all.find(val => val.id == id)
+        setEditid(id)
+        setName(editdata.name)
+        setPhone(editdata.phone)
     }
 
     const userDelet =(id)=>{
@@ -112,7 +139,9 @@ const Crud = () => {
         <form onSubmit={handlesubmit} className='form'>
         <p>Name : {""}<input type="text" placeholder='Enter Youre Name..' onChange={(e)=>setName(e.target.value)} value={name}/></p>
         <p>Phone : {""}<input type="number" placeholder='Enter Youre Phone..' onChange={(e)=>setPhone(e.target.value)} value={phone}/></p>
-        <input className='btn' type="submit" />
+        {
+            editid ? <input className='btn' type="submit" /> : <input className='btn' type="submit" />
+        }
         </form>
         <h1>:: View User Data ::</h1>
         <table border={5}>
@@ -122,9 +151,10 @@ const Crud = () => {
                     <td>Name</td>
                     <td>Phone</td>
                     <td>Status</td>
+                    <td>Edit</td>
                     <td>Action</td>
                     <td><button className='mdbtn' onClick={()=>multipleDelet()}>Delet</button></td>
-                    <td><button className='mdbtn' onClick={()=>multipleStatusedite()}>Status Edite</button></td>
+                    <td><button className='mdbtn' onClick={()=>multipleStatusedite()}>Status Edit</button></td>
                 </tr>
             </thead>
             <tbody>
@@ -144,6 +174,7 @@ const Crud = () => {
                                    )   
                                 }
                                 </td>
+                                <td><button className='mdbtn' onClick={()=>handleEdite(val.id)}>Edit</button></td>
                                 <td><button className='btn' style={{background:"#ed5650",color:"white",cursor:"pointer"}} onClick={()=>userDelet(val.id)}>Delet</button></td>
                                 <td><input type="checkbox" onChange={(e)=>handleChangedelet(val.id,e.target.checked)}/></td>
                                 <td><input type="checkbox" checked={mstatus.includes(val.id)} onChange={(e)=>handleStatusedite(val.id,e.target.checked)}/></td>
